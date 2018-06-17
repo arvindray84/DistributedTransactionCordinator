@@ -1,0 +1,35 @@
+Pre requities: 
+1> Every rest api which is part of transaction must provide roll back rest end point.
+2> Every rest api must implement optimistic locking (@version annotation in hibernate) or custom impl.
+
+What is Distributed Transaction cordinator(DTC): It will act as a choreographer for any distributed transaction intiaited by an application as 
+per configuration or convention specified.
+
+When do I need DTC: If you have a use case which span through multiple web service and DB call and required full or partial atomicity.
+
+Why do I need build DTC: If you still searching for any reliable tool which cater this use case in efficient way.
+
+How exactly it will be done: DTC will intercept and act as proxy for every rest and DB call intiaited from a method which is annonated with @TransactionCordinator.
+DTC will store input request value and its calling sequence in memory. In case of execption or rollback request from any service, DTC will read the 
+DTC configuration table and will know which end point to hit for rollback operation. 
+It will use perviously stored input request to intiaited new rollback request depending upon configuration or convention.
+
+What do you mean by configuration or convention: Convention is like following the predefined standard of DTC/REST/JAVA. For example:
+In case of order creation use case if api name is "Order" with PUT/POST HTTP Verb and API will assume that there is "Order" api with HTTP verb "DELETE" which need to be called in case of rollback.
+Or,
+In case of order creation use case if api name is "createOrder" with PUT/POST HTTP Verb and API will assume that there is "deleteOrder" api with HTTP verb "PUT/POST"(DELETE HTTP verb may have be prohibhited) which need to be called in case of rollback.
+These kind of custom convention can be build around DTC to make DTC more intelligent.
+When you configure DTC with configuration setting then, system will go to DTC configuration table and pick the required rollback API name and input parameter if needed or else it will use existing stored input parameter fro memory.
+
+If consumer have to write rollback and dirty check logic, then what advantage will DTC give to consumer: 
+Developer no longer need to write boilerplate logic for any rollback operation. All logic will be annonated and configured driven.
+DTC will intercept exception/ error response code and look into configuration table for partial or full atomicity, 
+rollback api etc. Any 
+
+
+
+
+
+
+
+
